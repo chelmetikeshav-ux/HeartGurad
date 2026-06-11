@@ -173,26 +173,60 @@ if st.session_state.logged_in:
             unsafe_allow_html=True,
         )
 
+    # ...existing code...
+
     col1, col2 = st.columns(2)
+
+    # Friendly label → encoding maps
+    SEX_MAP = {"Female": 0, "Male": 1}
+    CP_OPTIONS = [
+        ("Typical Chest Pain", 0),
+        ("Mild/Atypical Chest Pain", 1),
+        ("Non-Heart Related Chest Pain", 2),
+        ("No Chest Pain Symptoms", 3),
+    ]
+    CP_MAP = {label: code for label, code in CP_OPTIONS}
+    FBS_MAP = {"No": 0, "Yes": 1}
+    RESTECG_MAP = {"Normal": 0, "Minor Abnormality": 1, "Significant Abnormality": 2}
+    EXANG_MAP = {"No": 0, "Yes": 1}
+    SLOPE_MAP = {"Improving": 0, "Stable": 1, "Worsening": 2}
+    THAL_MAP = {"Normal": 1, "Fixed Blood Flow Problem": 2, "Temporary Blood Flow Problem": 3}
 
     with col1:
         age = st.number_input("Age", 1, 120)
-        sex = st.selectbox("Sex (0 = Female, 1 = Male)", [0, 1])
-        cp = st.number_input("Chest Pain Type (0-3)", 0, 3)
+
+        sex_label = st.selectbox("Gender (sex)", list(SEX_MAP.keys()))
+        sex = SEX_MAP[sex_label]
+
+        cp_label = st.selectbox("Chest Pain (cp)", [label for label, _ in CP_OPTIONS])
+        cp = CP_MAP[cp_label]
         # show description for selected chest pain value
         st.caption(CHEST_PAIN_DESCRIPTIONS.get(int(cp), ""))
+
         trestbps = st.number_input("Resting Blood Pressure")
         chol = st.number_input("Cholesterol")
-        fbs = st.selectbox("Fasting Blood Sugar >120", [0, 1])
+
+        fbs_label = st.selectbox("High Blood Sugar (fbs)", list(FBS_MAP.keys()))
+        fbs = FBS_MAP[fbs_label]
 
     with col2:
-        restecg = st.number_input("Resting ECG (0-2)", 0, 2)
+        restecg_label = st.selectbox("Heart Rhythm Test (restecg)", list(RESTECG_MAP.keys()))
+        restecg = RESTECG_MAP[restecg_label]
+
         thalach = st.number_input("Max Heart Rate Achieved")
-        exang = st.selectbox("Exercise Induced Angina", [0, 1])
+
+        exang_label = st.selectbox("Chest Pain During Exercise (exang)", list(EXANG_MAP.keys()))
+        exang = EXANG_MAP[exang_label]
+
         oldpeak = st.number_input("ST Depression")
-        slope = st.number_input("Slope (0-2)", 0, 2)
+
+        slope_label = st.selectbox("Stress Test Pattern (slope)", list(SLOPE_MAP.keys()))
+        slope = SLOPE_MAP[slope_label]
+
         ca = st.number_input("Major Vessels (0-3)", 0, 3)
-        thal = st.number_input("Thal (1-3)", 1, 3)
+
+        thal_label = st.selectbox("Blood Flow Test (thal)", list(THAL_MAP.keys()))
+        thal = THAL_MAP[thal_label]
 
     st.markdown("---")
 
