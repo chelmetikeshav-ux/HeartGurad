@@ -66,6 +66,14 @@ def register_user(username, password):
     except:
         return False
 
+# New: chest pain descriptions mapping
+CHEST_PAIN_DESCRIPTIONS = {
+    0: "No chest pain.",
+    1: "Mild pain or discomfort; noticeable but does not interfere with normal activities.",
+    2: "Moderate pain; uncomfortable and may limit some activities or require rest.",
+    3: "Severe pain; very distressing, difficult to ignore, or significantly limits activity."
+}
+
 # -------------------------
 # SESSION STATE INIT
 # -------------------------
@@ -142,12 +150,37 @@ if st.session_state.logged_in:
     # -------------------------
     st.markdown("## 🩺 Enter Patient Details")
 
+    # Parameter details expander
+    with st.expander("Parameter details (click to expand)", expanded=False):
+        st.markdown(
+            """
+| Parameter | Description |
+| --- | --- |
+| **Age** | Patient's age in years. Risk of heart disease generally increases with age. |
+| **Sex (0 = Female, 1 = Male)** | Biological sex of the patient. Males often have a higher risk of coronary artery disease at younger ages. |
+| **Chest Pain Type (0–3)** | Type of chest pain experienced by the patient. Common encodings are:<br>**0** = Typical angina (heart-related chest pain)<br>**1** = Atypical angina<br>**2** = Non-anginal pain<br>**3** = Asymptomatic (no chest pain symptoms). |
+| **Resting Blood Pressure** | Blood pressure measured while at rest (mm Hg). Higher values may indicate hypertension. |
+| **Cholesterol** | Serum cholesterol level (mg/dL). Elevated cholesterol can increase cardiovascular risk. |
+| **Fasting Blood Sugar >120** | Indicates whether fasting blood sugar exceeds 120 mg/dL.<br>**0** = No (≤120)<br>**1** = Yes (>120). |
+| **Resting ECG (0–2)** | Results of the resting electrocardiogram. Typical encoding:<br>**0** = Normal ECG<br>**1** = ST-T wave abnormality<br>**2** = Left ventricular hypertrophy. |
+| **Max Heart Rate Achieved** | Maximum heart rate reached during an exercise stress test. Lower-than-expected values can indicate heart problems. |
+| **Exercise Induced Angina** | Whether exercise causes chest pain.<br>**0** = No<br>**1** = Yes. |
+| **ST Depression** | Amount of ST segment depression induced by exercise relative to rest. Higher values may indicate reduced blood flow to the heart. |
+| **Slope (0–2)** | Slope of the peak exercise ST segment. Typical encoding:<br>**0** = Upsloping<br>**1** = Flat<br>**2** = Downsloping. |
+| **Major Vessels (0–3)** | Number of major coronary vessels colored by fluoroscopy. Higher values often indicate more visible vessels and may be associated with disease patterns. |
+| **Thal (1–3)** | Result of a thallium stress test. Common encoding:<br>**1** = Normal<br>**2** = Fixed defect (permanent damage)<br>**3** = Reversible defect (temporary blood-flow issue during stress). |
+            """,
+            unsafe_allow_html=True,
+        )
+
     col1, col2 = st.columns(2)
 
     with col1:
         age = st.number_input("Age", 1, 120)
         sex = st.selectbox("Sex (0 = Female, 1 = Male)", [0, 1])
         cp = st.number_input("Chest Pain Type (0-3)", 0, 3)
+        # show description for selected chest pain value
+        st.caption(CHEST_PAIN_DESCRIPTIONS.get(int(cp), ""))
         trestbps = st.number_input("Resting Blood Pressure")
         chol = st.number_input("Cholesterol")
         fbs = st.selectbox("Fasting Blood Sugar >120", [0, 1])
