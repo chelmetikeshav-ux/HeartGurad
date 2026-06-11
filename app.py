@@ -150,31 +150,6 @@ if st.session_state.logged_in:
     # -------------------------
     st.markdown("## 🩺 Enter Patient Details")
 
-    # Parameter details expander
-    with st.expander("Parameter details (click to expand)", expanded=False):
-        st.markdown(
-            """
-| Parameter | Description |
-| --- | --- |
-| **Age** | Patient's age in years. Risk of heart disease generally increases with age. |
-| **Sex (0 = Female, 1 = Male)** | Biological sex of the patient. Males often have a higher risk of coronary artery disease at younger ages. |
-| **Chest Pain Type (0–3)** | Type of chest pain experienced by the patient. Common encodings are:<br>**0** = Typical angina (heart-related chest pain)<br>**1** = Atypical angina<br>**2** = Non-anginal pain<br>**3** = Asymptomatic (no chest pain symptoms). |
-| **Resting Blood Pressure** | Blood pressure measured while at rest (mm Hg). Higher values may indicate hypertension. |
-| **Cholesterol** | Serum cholesterol level (mg/dL). Elevated cholesterol can increase cardiovascular risk. |
-| **Fasting Blood Sugar >120** | Indicates whether fasting blood sugar exceeds 120 mg/dL.<br>**0** = No (≤120)<br>**1** = Yes (>120). |
-| **Resting ECG (0–2)** | Results of the resting electrocardiogram. Typical encoding:<br>**0** = Normal ECG<br>**1** = ST-T wave abnormality<br>**2** = Left ventricular hypertrophy. |
-| **Max Heart Rate Achieved** | Maximum heart rate reached during an exercise stress test. Lower-than-expected values can indicate heart problems. |
-| **Exercise Induced Angina** | Whether exercise causes chest pain.<br>**0** = No<br>**1** = Yes. |
-| **ST Depression** | Amount of ST segment depression induced by exercise relative to rest. Higher values may indicate reduced blood flow to the heart. |
-| **Slope (0–2)** | Slope of the peak exercise ST segment. Typical encoding:<br>**0** = Upsloping<br>**1** = Flat<br>**2** = Downsloping. |
-| **Major Vessels (0–3)** | Number of major coronary vessels colored by fluoroscopy. Higher values often indicate more visible vessels and may be associated with disease patterns. |
-| **Thal (1–3)** | Result of a thallium stress test. Common encoding:<br>**1** = Normal<br>**2** = Fixed defect (permanent damage)<br>**3** = Reversible defect (temporary blood-flow issue during stress). |
-            """,
-            unsafe_allow_html=True,
-        )
-
-    # ...existing code...
-
     col1, col2 = st.columns(2)
 
     # Friendly label → encoding maps
@@ -193,7 +168,7 @@ if st.session_state.logged_in:
     THAL_MAP = {"Normal": 1, "Fixed Blood Flow Problem": 2, "Temporary Blood Flow Problem": 3}
 
     with col1:
-        age = st.number_input("Age", 1, 120)
+        age = st.number_input("Age (years)", min_value=18, max_value=100, value=40, step=1)
 
         sex_label = st.selectbox("Gender (sex)", list(SEX_MAP.keys()))
         sex = SEX_MAP[sex_label]
@@ -203,8 +178,8 @@ if st.session_state.logged_in:
         # show description for selected chest pain value
         st.caption(CHEST_PAIN_DESCRIPTIONS.get(int(cp), ""))
 
-        trestbps = st.number_input("Resting Blood Pressure")
-        chol = st.number_input("Cholesterol")
+        trestbps = st.number_input("Resting Blood Pressure (mmHg)", min_value=80, max_value=220, value=120, step=1)
+        chol = st.number_input("Cholesterol (mg/dL)", min_value=100, max_value=600, value=200, step=1)
 
         fbs_label = st.selectbox("High Blood Sugar (fbs)", list(FBS_MAP.keys()))
         fbs = FBS_MAP[fbs_label]
@@ -213,20 +188,21 @@ if st.session_state.logged_in:
         restecg_label = st.selectbox("Heart Rhythm Test (restecg)", list(RESTECG_MAP.keys()))
         restecg = RESTECG_MAP[restecg_label]
 
-        thalach = st.number_input("Max Heart Rate Achieved")
+        thalach = st.number_input("Max Heart Rate Achieved (BPM)", min_value=60, max_value=220, value=150, step=1)
 
         exang_label = st.selectbox("Chest Pain During Exercise (exang)", list(EXANG_MAP.keys()))
         exang = EXANG_MAP[exang_label]
 
-        oldpeak = st.number_input("ST Depression")
+        oldpeak = st.number_input("ST Depression", min_value=0.0, max_value=6.5, value=0.0, step=0.1, format="%.1f")
 
         slope_label = st.selectbox("Stress Test Pattern (slope)", list(SLOPE_MAP.keys()))
         slope = SLOPE_MAP[slope_label]
 
-        ca = st.number_input("Major Vessels (0-3)", 0, 3)
+        ca = st.number_input("Major Vessels (0-3)", min_value=0, max_value=3, value=0, step=1)
 
         thal_label = st.selectbox("Blood Flow Test (thal)", list(THAL_MAP.keys()))
         thal = THAL_MAP[thal_label]
+# ...existing code...
 
     st.markdown("---")
 
